@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+	<head><title>Fields Pattern Generator</title></head>
+	<body>
+		<h3>Fields Pattern generator</h3>
+		<br/>
+		<form id="inputform" name="inputform">
+			<div style="border:thin solid gray; padding:10px;" >
+				<div>Enter fields </div>
+				<textarea name="fields" style="width:90%;"  >field1,field2</textarea>
+				<br/>
+				<br/>
+				<div>Html Pattern [forTitle: FIELD_TITLE , forFieldname: FIELD_NAME] </div>
+				<textarea name="htmlpattern" style="width:90%" ><label>FIELD_TITLE</label><input   name="FIELD_NAME" value="" /></textarea>
+				<br/>
+				<input type="button" name="genratebutton" value="Submit" />
+			</div>
+			<br/>
+			<div style="border:thin solid gray; padding:10px;" >
+				<div>Output</div>
+				<textarea name="output" style="width:90%;height:400px;"  ></textarea>
+			</div>
+		</form>
+		<script>
+			window.addEventListener("load",function(){
+				
+				var frm=document.getElementById("inputform");
+				var fields=frm.fields;
+				var pattern=frm.htmlpattern;
+				frm.genratebutton.addEventListener("click",function(){
+					try{
+					var fieldsList=fields.value.replace(/\n/g,"").replace(/\s/g,"").split(",");
+					var output="";
+					for(var i=0;i<fieldsList.length;i++){
+						var fieldname=	fieldsList[i];
+						if(fieldname==""){
+							break;
+						}
+						var titlename= "";
+						var sc_na=fieldname.split("_");
+						for(var j=0;j<sc_na.length;j++){
+							titlename+=  sc_na[j][0].toUpperCase()+sc_na[j].substring(1)+(j!=sc_na.length-1?" ":"");	
+						}
+						var resulthtml=pattern.value.replace(new RegExp("FIELD_TITLE", 'g'),titlename);
+						resulthtml=resulthtml.replace(new RegExp("FIELD_NAME", 'g'),fieldname);
+						output+=resulthtml+"\n";
+						
+					}	
+					frm.output.value=output;
+					}catch(e){
+						console.log(e);
+						alert(e.message);
+					}
+				});
+				
+			});
+		</script>
+	</body>
+</html>
