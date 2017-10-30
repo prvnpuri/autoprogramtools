@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<div style="width:90%;">
+		Json Array Input
+		<textarea style="width:100%; height: 100px;" id="jsonInput"></textarea>
+		Json Array Append
+		<textarea style="width:100%; height: 100px;" id="jsonAppend"></textarea>
+		Json Output: <button type='button' id="appendButton" >Append</button>
+		<textarea style="width:100%; height: 100px;" id="jsonOutput"></textarea>
+	
+	</div>
+	<script>
+		window.onload=function(){
+			var button=document.getElementById("appendButton");
+			var jsonInputElmt=document.getElementById("jsonInput");
+			var jsonAppendElmt=document.getElementById("jsonAppend");
+			var jsonOutputElmt=document.getElementById("jsonOutput");
+			button.addEventListener("click",function(){
+				var jsonInput=JSON.parse(jsonInputElmt.value);
+				var jsonAppend=JSON.parse(jsonAppendElmt.value);
+				var jsonOutput=JSON.stringify(apendJson(jsonInput,jsonAppend));
+				jsonOutputElmt.value=jsonOutput;
+			});
+		}
+		
+		function apendJson(jsonInputList,jsonAppendlist){
+			var keyToAdd="lhv_btu_per_scf";
+			for(var x in jsonInputList){
+				jsonInputList[x][keyToAdd]=jsonAppendlist[x][keyToAdd];
+			}
+			return jsonInputList;
+		}
+		
+	</script>
+</body>
+</html>
