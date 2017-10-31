@@ -1,7 +1,7 @@
 <?php
-$data["term"]="Cromogenia-Units, S.A. ";
-$url="https://localhost/polymer-development/Polyajax/consigneeMaster";
-$method="POST";
+$data["term"]="data";
+$url="url";
+$method="POST"; // post or get
 ?>
 <html>
 	<head>
