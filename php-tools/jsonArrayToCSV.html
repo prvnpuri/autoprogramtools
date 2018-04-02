@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<!-- Author: Praveen -->
+<title>JSON Array to CSV</title>
+</head>
+<body>
+	<h2>JSON array to csv</h2>
+	<div style="width:90%;">
+		Json Array Input
+		<textarea style="width:100%; height: 100px;" id="jsonInput"></textarea>
+		<br/>
+		CSV RAW Output: <button type='button' id="appendButton" >Convert To JSON</button>
+		<textarea style="width:100%; height: 100px;" id="jsonOutput"></textarea>
+		<a id='donwloadFile' download="JSON_2_CSV.csv" />Download</a>
+	</div>
+	<script>
+		window.onload=function(){
+			
+			var button=document.getElementById("appendButton");
+			var jsonInputElmt=document.getElementById("jsonInput");
+			var jsonOutputElmt=document.getElementById("jsonOutput");
+			var downloadAELmt=document.getElementById("donwloadFile");
+			button.addEventListener("click",function(){
+				var jsonInput=JSON.parse(jsonInputElmt.value);
+				var jsonOutput=jsonTOCSV(jsonInput);
+				jsonOutputElmt.value=jsonOutput;
+				downloadAELmt.href=makeRAWFileLink(jsonOutput,"text/csv;charset=utf-8");
+			});
+			jsonInputElmt.value=JSON.stringify(sampleData());
+		}
+		
+		function makeRAWFileLink(data,type){
+			return "data: "+type+","+escape(data);
+		}
+		
+		function jsonTOCSV(jsonInputList){
+			var csv="";
+			for(var x in jsonInputList){
+				var objectKeys=Object.keys(jsonInputList[x]);
+				var lent=objectKeys.length;
+				var lastELM= lent>0? objectKeys[lent-1]:null;
+				for(var ck in jsonInputList[x]){
+					csv+="\""+ jsonInputList[x][ck]+"\""+ ( (lastELM!=ck)? ',' :'');
+				}
+				csv+='\r\n';
+			}
+			return csv;
+		}
+		function sampleData(){
+			return [
+		                {
+		                	id:1,
+		                	name:"Set 1"
+		                },
+		                {
+		                	id:2,
+		                	name:"Set 2"
+		    			}
+					];
+		}
+	</script>
+</body>
+</html>

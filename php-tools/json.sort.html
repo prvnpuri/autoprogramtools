@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>JSON Sorter</title>
+	<script type="text/javascript" src="./libs/shortlib.js"></script>
+</head>
+<body>
+	<div style="padding:10px;">
+			<button id="beauteefyButton">Beauteefy</button>
+		</div>
+		
+	<div style="display:inline-block; width:45%;vertical-align: top;">
+		<div style="padding:10px;">
+			Input json
+			<textarea id="inputJson" style="width:100%;height: 500px;"></textarea>
+		</div>
+	</div>
+	<div style="display:inline-block; width:45%;vertical-align: top;">
+		<div style="padding:10px;">
+			OutJson json
+			<textarea id="outputJson" style="width:100%;height: 500px;"></textarea>
+		</div>
+	</div>
+	<script>
+		window.onload=function(){
+			var inputjson=elmtId('inputJson');
+			var outputjson=elmtId('outputJson');
+			var beautyButton=elmtId('beauteefyButton');
+			var updateFunction=function(){
+				try{
+					var obj=JSON.parse(inputjson.value);
+				}catch(e){
+					outputjson.value=e;	
+				}
+			}
+			beautyButton.addEventListener('click',updateFunction);
+			
+			var beautyFy=function(jsonObj,tabStr,keyStr){
+				var initStr,endStr, jsonStr;
+				if( jsonObj instanceof Array){
+					initStr="["+"\n";
+					endtStr=tabStr+"]"+"\n";
+				}else if( jsonObj instanceof Object){
+					initStr="{"+"\n";
+					endtStr=tabStr+"}"+"\n";
+				}else {
+					initStr="";
+					endtStr=",\n";
+				}				
+				return ( keyStr.trim()==""? tabStr+ keyStr+" : "+initStr+jsonStr+endtStr);				
+			}
+			
+		}
+		
+	</script>
+</body>
+</html>
