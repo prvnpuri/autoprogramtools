@@ -1,1 +1,1 @@
-<?php echo "Hello ,  how are you1dads"?>
+<?php echo "Hello ,  how are you"?>
