@@ -1,1 +1,1 @@
-<?php echo "HI thidasdsas is test 2 file" ?>
+<?php echo "HI thdasdsas is test 2 file" ?>
