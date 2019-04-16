@@ -11,12 +11,13 @@
         		<hr/>
         		<label style="display:inline-block;width:150px"> Add inputs: </label>	
     			<table class="formtable">
+    				
     				<tr class="row">
     					<td style="width:30%">
-    						<input  style="width:100%" type="text" name="inputname"/>
+    						<input placeholder='Input name'  style="width:100%" type="text" name="inputname"/>
     					<td>
     					<td style="width:60%">
-    						<input  style="width:100%" type="text" name="inputvalue"/>
+    						<input  placeholder='Input value'   style="width:100%" type="text" name="inputvalue"/>
     					<td>
     					<td style="width:10%">
     						<input style="padding:2px;font-weight: bold;" class="remover" type="button" value=" - ">
@@ -37,14 +38,29 @@
 			rowHtml=findElmt(".formtable .row").get(0).elmt.outerHTML;
 			var addRow=function(){
 				var table=findElmt(".formtable").get(0).elmt;
-				var div = document.createElement('div');
+				var div = document.createElement('table');
 				div.innerHTML = rowHtml;
 				table.appendChild(div.childNodes[0]);
-				
+				findElmt(".remover",div).get(0).elmt.onclick=function(){
+					table.removeChild(div);
+				}	
 			}
 			findElmt(".add").get(0).elmt.onclick=function(){
 				addRow();
 			}
+
+			var submit=findElmt(".submit").get(0).elmt;
+			submit.addEventListener("click",function(){
+				var form=document.createElement('form');
+				form.setAttribute('action',findElmt("inout[name=formurl]").get(0).elmt.value);
+				form.setAttribute('action',findElmt("inout[name=formmethod]").get(0).elmt.value);
+				var inputs=findElmt("input[name=inputname]");
+				for(var i =0; i< inputs.size() ; i++ ){
+					var inputname= inputs.get(i).elmt;
+						
+				}
+				var input=document.createElement('input');
+			});
 			
 				
 		})
@@ -74,6 +90,12 @@
 						
 						}
 					}
+				},
+				size:function(){
+					return _elmt!=null ?  _elmt.length : 0 ;
+				},
+				parent:function(){
+					return _elmt.parentElement
 				}
 			}
 		}

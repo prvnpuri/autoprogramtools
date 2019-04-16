@@ -11,22 +11,41 @@
 		Json Array Input
 		<textarea style="width:100%; height: 100px;" id="jsonInput"></textarea>
 		<br/>
-		CSV RAW Output: <button type='button' id="appendButton" >Convert To JSON</button>
+		CSV RAW Output: <button type='button' id="appendButton" >Convert To JSON</button> <span id="loading" style="display:none; color:blue;" > Please wait</span>
 		<textarea style="width:100%; height: 100px;" id="jsonOutput"></textarea>
 		<a id='donwloadFile' download="JSON_2_CSV.csv" />Download</a>
 	</div>
 	<script>
 		window.onload=function(){
-			
+			var showLoading=function(_show){
+				if(_show){ 
+					document.getElementById("loading").style.display="inline-block";
+
+				 }else{
+					document.getElementById("loading").style.display="none";
+ 
+				 }
+			};
 			var button=document.getElementById("appendButton");
 			var jsonInputElmt=document.getElementById("jsonInput");
 			var jsonOutputElmt=document.getElementById("jsonOutput");
 			var downloadAELmt=document.getElementById("donwloadFile");
 			button.addEventListener("click",function(){
-				var jsonInput=JSON.parse(jsonInputElmt.value);
-				var jsonOutput=jsonTOCSV(jsonInput);
-				jsonOutputElmt.value=jsonOutput;
-				downloadAELmt.href=makeRAWFileLink(jsonOutput,"text/csv;charset=utf-8");
+				showLoading(true)
+				setTimeout(function(){
+					try{
+					var jsonInput=JSON.parse(jsonInputElmt.value);
+					var jsonOutput=jsonTOCSV(jsonInput);
+					jsonOutputElmt.value=jsonOutput;
+					downloadAELmt.href=makeRAWFileLink(jsonOutput,"text/csv;charset=utf-8");
+					
+					}catch(e){
+						alert("Error on processing");	
+						console.log(e);		
+					}
+					showLoading(false);
+				},100);
+				
 			});
 			jsonInputElmt.value=JSON.stringify(sampleData());
 		}
@@ -35,14 +54,42 @@
 			return "data: "+type+","+escape(data);
 		}
 		
-		function jsonTOCSV(jsonInputList){
+		function jsonTOCSV(jsonInputList,tab_length){
 			var csv="";
+			console.log("tab_length 1:"+tab_length);
+			tab_length= tab_length==null ? 0 : tab_length;
+			console.log("tab_length 2:"+tab_length);
+			if(jsonInputList.length>0){
+				x=0;
+				var objectKeys=Object.keys(jsonInputList[x]);
+				var lent=objectKeys.length;
+				var lastELM= lent>0? objectKeys[lent-1]:null;
+				for(var t=0; t< tab_length ; t++){
+					csv+="\""+ " "+"\""+ ',' ;
+				}
+				for(var ck in jsonInputList[x]){
+					csv+="\""+ ck+"\""+ ( (lastELM!=ck)? ',' :'');
+				}
+				
+				csv+='\r\n';
+			}
+			console.log("tab_length 3:"+tab_length);
 			for(var x in jsonInputList){
 				var objectKeys=Object.keys(jsonInputList[x]);
 				var lent=objectKeys.length;
 				var lastELM= lent>0? objectKeys[lent-1]:null;
+				for(var t=0; t< tab_length ; t++){
+					csv+="\""+ " "+"\""+ ',' ;
+				}
+				var itab=0;
 				for(var ck in jsonInputList[x]){
-					csv+="\""+ jsonInputList[x][ck]+"\""+ ( (lastELM!=ck)? ',' :'');
+					++ itab;
+					if(jsonInputList[x][ck] instanceof Object ){
+						console.log(itab + "+" + tab_length + "= " + (tab_length+ itab));
+						csv+= '\r\n'+ jsonTOCSV(jsonInputList[x][ck], (tab_length+ itab) ) ;
+					}else{
+						csv+="\""+ jsonInputList[x][ck]+"\""+ ( (lastELM!=ck)? ',' :'');
+					}
 				}
 				csv+='\r\n';
 			}

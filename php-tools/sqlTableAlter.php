@@ -47,7 +47,15 @@ if(isset($_GET["tablename"])){
 <html>
 	<head>
 		<title>Add column query builder for Mysql.</title>
-		<style>
+		<link rel=stylesheet href="./jslibs/codemirror/lib/docs.css">
+		<link rel="stylesheet" href="./jslibs/codemirror/lib/codemirror.css" />
+        <script src="./jslibs/codemirror/lib/codemirror.js"></script>
+        <script src="./jslibs/codemirror/lib/matchbrackets.js"></script>
+        <script src="./jslibs/codemirror/lib/sql/sql.js"></script>
+        <link rel="stylesheet" href="./jslibs/codemirror/lib/sql/show-hint.css" />
+        <script src="./jslibs/codemirror/lib/sql/show-hint.js"></script>
+        <script src="./jslibs/codemirror/lib/sql/sql-hint.js"></script>
+<style>
 .label{
 	width:200px;
 	display: inline-block;
@@ -55,16 +63,32 @@ if(isset($_GET["tablename"])){
 .input{
 	width:300px;
 }
-.textarea{
-	width:700px;
-	height:400px;
-}
+
 .error{
 	color: red;
 	font-weight: bold;
 }
 </style>
 	</head>
+<script>
+window.onload = function() {
+  var mime = 'text/x-mariadb';
+  // get mime type
+  if (window.location.href.indexOf('mime=') > -1) {
+    mime = window.location.href.substr(window.location.href.indexOf('mime=') + 5);
+  }
+  window.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+    mode: mime,
+    indentWithTabs: true,
+    smartIndent: true,
+    lineNumbers: true,
+    matchBrackets : true,
+    autofocus: true,
+    extraKeys: {"Ctrl-Space": "autocomplete"},
+    
+  });
+};
+</script>	
 <body>
 <h1>Add column query builder for Mysql.</h1>
 
@@ -100,7 +124,7 @@ if(isset($_GET["tablename"])){
 
 <?php 
 
-echo "<!-- @author: Praveen Goswami. -->";
+echo "<!-- xXx -->";
 
 if($dbname==""){
 	echo "<label class='error'>Enter db name</lable>";exit();
@@ -118,20 +142,35 @@ $result=mysql_query("desc `$tablename`",$mysql_conn);
 if(isset($result)){
 	$i=0;
 	$afterFields=null;
-	echo "<textarea class='coltext textarea'>";
+	echo "<textarea id='code' class='coltext textarea'>";
+    echo "-- SQL burner -- ";	
 	while ($meta = mysql_fetch_assoc($result)) {
-		if($i==0){
-			echo " ALTER TABLE `$tablename` ";
-		}else{
-			echo " , \n ";		
-		}
-		$isNull=$meta["Null"]=="YES";
-			echo " ADD COLUMN `".$meta["Field"]."` ".$meta["Type"]." ".($isNull?" NULL ":" ");
-	 	if(isset($afterFields)){
-			echo "AFTER `$afterFields` ";
-		}
-		$i++;
-		$afterFields=$meta["Field"];
+	    $isNull=$meta["Null"]=="YES";
+	    $null= $isNull ? " NULL ":" ";
+	    $after=$afterFields==null?"":"AFTER `$afterFields`";
+	    echo "
+-- Table : {$tablename} and column {$meta["Field"]}
+Set @Query=( select  if(EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{$tablename}' AND column_name='{$meta["Field"]}' and TABLE_SCHEMA=database()) ,
+    \"ALTER TABLE `{$tablename}` MODIFY  `{$meta["Field"]}` {$meta["Type"]} {$null} {$after}; \",
+    \"ALTER TABLE `{$tablename}` ADD COLUMN  `{$meta["Field"]}` {$meta["Type"]} {$null} {$after};\"  )) ;
+PREPARE queryPre from @Query;
+EXECUTE queryPre ;
+DEALLOCATE PREPARE queryPre;
+\n
+";	    
+	    
+// 	    if($i==0){
+// 			echo " ALTER TABLE `$tablename` ";
+// 		}else{
+// 			echo " , \n ";		
+// 		}
+		
+// 			echo " ADD COLUMN `".$meta["Field"]."` ".$meta["Type"]." ".($isNull?" NULL ":" ");
+// 	 	if(isset($afterFields)){
+// 			echo "AFTER `$afterFields` ";
+// 		}
+// 		$i++;
+// 		$afterFields=$meta["Field"];
 		
 	}		
 	echo "; </textarea>";

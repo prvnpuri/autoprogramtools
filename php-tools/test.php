@@ -1,5 +1,24 @@
-<?php 
-$testMethod=function($str){ return $str." is a string";};
-$testMethod1="st";
-echo is_callable($testMethod1)? "Is callable" : "Not callable"  ;
-?>
+<html>
+	<body>
+		<input type="text" name='name' data-model='x'>
+		<span data-view='x'></span>
+		
+		<script>
+
+			class Elmt{
+
+				  constructor(_var) {
+				    this._var = _var;
+				  }
+
+				  =(){
+
+				  }	
+			}
+
+			
+			
+		</script>
+		
+	</body>
+</html>
