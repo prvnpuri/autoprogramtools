@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	Input :<br/>
+	<textarea id="input" style="width:600px;height:400px" >
+	
+	</textarea>
+	<br><br>
+	Wrap Inline output :<br/>
+	<textarea id="output" style="width:600px;height:400px" >
+	
+	</textarea>
+	
+	<script>
+	
+	window.addEventListener("load",function(win_load_evt){
+		var inputelmt= elmtById("input");
+		var outpurelmt= elmtById("output");
+		inputelmt.addEventListener("change",function(){
+			var inputtext=inputelmt.value;
+			var regx=new RegExp("\n");
+			outpurelmt.value=inputtext.replace(/(\r\n\t|\n|\r\t)/gm,"");
+			outpurelmt.focus();
+		});
+		
+		
+	});
+	
+	function elmtById(_id){ return document.getElementById(_id); }
+
+	</script>
+</body>
+</html>
